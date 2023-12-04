@@ -4,7 +4,7 @@ with open('input.txt', 'r') as f:
 LINE_LEN = 140
 SPEC_CHARS = '*%@+-=/&$#'
 ADJ_MATRIX = [
-    -(LINE_LEN - 1), -(LINE_LEN), -(LINE_LEN+1),
+    -(LINE_LEN + 1), -(LINE_LEN), -(LINE_LEN - 1),
     -1, 1,
     LINE_LEN-1, LINE_LEN, LINE_LEN+1
 ]
@@ -29,11 +29,11 @@ while i < len(contents):
         if len(num_str) > 0:
             for idx in range(i, i+j):
                 if special_char_adj(idx):
-                    print(f"Include: {num_str}")
                     sum += int(num_str)
-                    break
-            else:
-                print(f"NOT: {num_str}")
+
+            # fix stupid bug where the 5 on (r=123, c=1) was being skipped
+            # resulting in answer being short by 500
+            j -= 1
 
     i += j + 1
 
