@@ -38,7 +38,7 @@ while i < len(contents):
 
 print(sum)
 
-# Part 6
+# Part 2
 from operator import mul
 from functools import reduce 
 
@@ -76,17 +76,13 @@ while i < len(contents):
     
     if contents[i] == "*":
         j = 0
-        NEW_NUMBER_FLAG = True 
+
         while j < len(ADJ_MATRIX):
             val = ADJ_MATRIX[j]
-
-            if not contents[i+val].isnumeric():
-                NEW_NUMBER_FLAG = True
-
             num_str = numeric_char_adj(i+val)
-            if NEW_NUMBER_FLAG and num_str:
+
+            if num_str and not int(num_str) in nums:
                 nums.append(int(num_str))
-                NEW_NUMBER_FLAG = False
 
             j += 1
                 
