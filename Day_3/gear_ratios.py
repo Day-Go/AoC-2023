@@ -4,8 +4,8 @@ with open('input.txt', 'r') as f:
 LINE_LEN = 140
 SPEC_CHARS = '*%@+-=/&$#'
 ADJ_MATRIX = [
-    -(LINE_LEN + 1), -(LINE_LEN), -(LINE_LEN - 1),
-    -1, 1,
+    -(LINE_LEN - 1), -(LINE_LEN), -(LINE_LEN+1),
+    -1, 0, 1,
     LINE_LEN-1, LINE_LEN, LINE_LEN+1
 ]
 
@@ -30,11 +30,71 @@ while i < len(contents):
             for idx in range(i, i+j):
                 if special_char_adj(idx):
                     sum += int(num_str)
+                    break
 
-            # fix stupid bug where the 5 on (r=123, c=1) was being skipped
-            # resulting in answer being short by 500
             j -= 1
 
     i += j + 1
 
 print(sum)
+
+# Part 6
+from operator import mul
+from functools import reduce 
+
+def get_whole_number(idx: int, num_str: str, go_to_start: bool):
+    '''
+    go_to_start = true -> Go left
+    '''
+    if not contents[idx].isnumeric() and not go_to_start:
+        return num_str
+
+    if contents[idx].isnumeric():
+        if go_to_start:
+            num_str = get_whole_number(idx-1, '', True)
+            return num_str
+            
+        else:
+            num_str += contents[idx]
+            num_str = get_whole_number(idx+1, num_str, False)
+            return num_str
+    else:
+        num_str = get_whole_number(idx+1, '', False)
+        return num_str
+
+def numeric_char_adj(idx) -> str:
+    if contents[idx].isnumeric():
+        num_str = ''
+        number = get_whole_number(idx, num_str, True)
+        return number
+    return ''
+
+i = 0
+sum = 0
+while i < len(contents):
+    nums = []
+    
+    if contents[i] == "*":
+        j = 0
+        NEW_NUMBER_FLAG = True 
+        while j < len(ADJ_MATRIX):
+            val = ADJ_MATRIX[j]
+
+            if not contents[i+val].isnumeric():
+                NEW_NUMBER_FLAG = True
+
+            num_str = numeric_char_adj(i+val)
+            if NEW_NUMBER_FLAG and num_str:
+                nums.append(int(num_str))
+                NEW_NUMBER_FLAG = False
+
+            j += 1
+                
+        if len(nums) >= 2:
+            print(nums)
+            sum += reduce(mul, nums, 1)
+
+    i += 1
+
+print(sum)
+
